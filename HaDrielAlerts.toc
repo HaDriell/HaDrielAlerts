@@ -1,0 +1,13 @@
+## Interface: 120000, 120001
+## Version: 0.0.1
+## Title: HaDriel Alerts
+## Notes: Various sound alerts for my own usage
+## Author: HaDriel
+## Category: HaDriel
+## SavedVariables: HaDrielDB
+## OptionalDeps: LibStub, LibSharedMedia-3.0
+
+embeds.xml
+
+HaDrielAlerts.lua
+Config.lua
