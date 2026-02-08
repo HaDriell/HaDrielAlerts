@@ -9,5 +9,6 @@
 
 embeds.xml
 
-HaDrielAlerts.lua
+ExtraSettingsControls.lua
 Config.lua
+HaDrielAlerts.lua

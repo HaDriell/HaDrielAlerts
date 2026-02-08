@@ -1,76 +1,97 @@
 local addonName, addon = ...
 
-local category, layout = Settings.RegisterVerticalLayoutCategory(addonName)
-addon.settingsCategory = category
+local function GetSoundOptions()
+    local container = Settings.CreateControlTextContainer()
 
--- Shamelessly adapted from BugSack
-
-local function CreateSharedMediaDropdownInitializer(label, tooltip, getterCallback, setterCallback)
-    local DropdownInitializer = CreateFromMixins(ScrollBoxFactoryInitializerMixin, SettingsElementHierarchyMixin, SettingsSearchableElementMixin)
-
-    function DropdownInitializer:Init()
-        ScrollBoxFactoryInitializerMixin.Init(self, "SettingsListElementTemplate")
-        self.data = {
-            name = label,
-            tooltip = tooltip,
-            GetValue = getterCallback,
-            SetValue = setterCallback
-        }
-        self:AddSearchTags(label)
+    local soundList = LibStub("LibSharedMedia-3.0"):List("sound")
+    for _, sound in ipairs(soundList) do
+        container:Add(sound, sound)
     end
 
-    function DropdownInitializer:GetExtent()
-        return 26 -- Height of the Control
-    end
-
-    function DropdownInitializer:InitFrame(frame)
-        frame:SetSize(280, 26)
-
-        if not frame.cbrHandles then
-            frame.cbrHandles = Settings.CreateCallbackHandleContainer()
-        end
-
-        frame.data = self.data
-        frame.Text:SetFontObject("GameFontNormal")
-        frame.Text:SetText(L["Sound"])
-        frame.Text:SetPoint("LEFT", 37, 0)
-        frame.Text:SetPoint("RIGHT", frame, "CENTER", -85, 0)
-
-        if not frame.previewButton then
-            frame.previewButton = CreateFrame("Button", nil, frame)
-            frame.previewButton:SetSize(26, 26)
-            frame.previewButton:SetPoint("LEFT", frame, "CENTER", -74, 0)
-            frame.previewButton:SetHeight(26)
-
-            local previewIcon = frame.previewButton:CreateTexture(nil, "ARTWORK")
-            previewIcon:SetAllPoints()
-            previewIcon:SetTexture("Interface\\Commin\\VoiceChat-Speaker")
-            previewIcon:SetVertexColor(0.8, 0.8, 0.8)
-
-            frame.previewButton:SetScript("OnEnter", function(control)
-                previewIcon:SetVertexColor(1, 1, 1)
-                GameTooltip:SetOwner(control, "ANCHOR_TOP")
-                GameTooltip:SetText(L["Preview Sound"])
-                GameTooltip:Show()
-            end)
-
-            frame.previewButton:SetScript("OnLeave", function(control) 
-                previewIcon:SetVertexColor(0.8, 0.8, 0.8)
-            end)
-
-            frame.previewButton:SetScript("OnClick", function(control)
-                local soundKey = self.data.GetValue()
-                addon:MakeSound(soundKey)
-            end)
-        end
-
-        if not frame.soundDropdown then
-            
-        end
-    end
+    return container:GetData()
 end
 
-
 function addon:InitializeOptions()
+    -- Setup the SavedVariable and bind to the addon
+    HaDrielDB = HaDrielDB or {
+        sounds = {},
+    }
+
+    local category, layout = Settings.RegisterVerticalLayoutCategory("HaDriel Alerts")
     
+    do
+        local name = "Output Channel"
+        local tooltip = "Audio Channel in which the sounds will be played."
+        local variable = "HA_CHANNEL"
+        local variableKey = "channel"
+        local variableTbl = HaDrielDB
+        local defaultValue = "SFX"
+        local function GetChannelOptions()
+            local container = Settings.CreateControlTextContainer()
+            local channels = { "Master", "Music", "SFX", "Ambience", "Dialog", "Talking Head", }
+            for _, channel in ipairs(channels) do
+                container:Add(channel, channel)
+            end
+            return container:GetData()
+        end
+        
+        local setting = Settings.RegisterAddOnSetting(category, variable, variableKey, variableTbl, type(defaultValue), name, defaultValue)
+        Settings.CreateDropdown(category, setting, GetChannelOptions, tooltip)
+    end
+
+    do
+        local name = "Horde Character Death Sound"
+        local tooltip = "Sound played when a Horde player dies."
+        local variable = "HA_SOUND_DEADHORDE"
+        local variableKey = "deadHorde"
+        local variableTbl = HaDrielDB.sounds
+        local defaultValue = "WCII Orc Dead"
+        
+        local setting = Settings.RegisterAddOnSetting(category, variable, variableKey, variableTbl, type(defaultValue), name, defaultValue)
+        
+        local dropdownInitializer = CreateFromMixins(SoundDropdownInitializer)
+        dropdownInitializer:Init(setting, tooltip)
+        layout:AddInitializer(dropdownInitializer)
+        Settings.SetOnValueChangedCallback(variable, function(setting, value)
+            addon:MakeSound(variableTbl[variableKey])
+        end)
+    end
+
+    do
+        local name = "Alliance Character Death Sound"
+        local tooltip = "Sound played when an Alliance player dies."
+        local variable = "HA_SOUND_DEADALLY"
+        local variableKey = "deadAlly"
+        local variableTbl = HaDrielDB.sounds
+        local defaultValue = "WCII Human Dead"
+        
+        local setting = Settings.RegisterAddOnSetting(category, variable, variableKey, variableTbl, type(defaultValue), name, defaultValue)
+        
+        local dropdownInitializer = CreateFromMixins(SoundDropdownInitializer)
+        dropdownInitializer:Init(setting, tooltip)
+        layout:AddInitializer(dropdownInitializer)
+        Settings.SetOnValueChangedCallback(variable, function(setting, value)
+            addon:MakeSound(variableTbl[variableKey])
+        end)
+    end
+    
+    do
+        local name = "Party Full Sound"
+        local tooltip = "Sound played when the group becomes full."
+        local variable = "HA_SOUND_PARTYFULL"
+        local variableKey = "partyFull"
+        local variableTbl = HaDrielDB.sounds
+        local defaultValue = "WCII Human Capture"
+        
+        local setting = Settings.RegisterAddOnSetting(category, variable, variableKey, variableTbl, type(defaultValue), name, defaultValue)
+        
+        local dropdownInitializer = CreateFromMixins(SoundDropdownInitializer)
+        dropdownInitializer:Init(setting, tooltip)
+        layout:AddInitializer(dropdownInitializer)
+        Settings.SetOnValueChangedCallback(variable, function(setting, value)
+            addon:MakeSound(variableTbl[variableKey])
+        end)
+    end
+
+    Settings.RegisterAddOnCategory(category)
 end

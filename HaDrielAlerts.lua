@@ -3,36 +3,19 @@ local addonName, addon = ...
 local f = CreateFrame("Frame")
 f.transient = {}
 
--- Sound alert implementation
+-- Sound alert implementations
 
-function addon:MakeSound(soundKey)
+-- Initial implementation, will be removed later
+function addon:MakeSound(soundKey, channel)
     local media = LibStub("LibSharedMedia-3.0")
     local sound = media:Fetch("sound", soundKey)
-    PlaySoundFile(sound)
+    PlaySoundFile(sound, channel)
 end
 
--- Addon Defaults & Initialization
-
-function addon:CreateDefaultDatabase()
-    return {
-        sounds = {
-            deadHorde = "WCII Orc Dead",
-            deadAlly = "WCII Human Dead",
-            partyFull = "WCII Misc Human Capture"       
-        }
-    }
-end
-
-function addon:InitializeDatabase()
-    if type(HaDrielDB) ~= "table" then
-        HaDrielDB = self:CreateDefaultDatabase()
-    end
-    self.db = HaDrielDB
-
-    addon:MakeSound(self.db.sounds.partyFull)
-    -- print("HaDrielAlert: deadHorde sound = " .. self.db.sounds.deadHorde)
-    -- print("HaDrielAlert: deadAlly sound = " .. self.db.sounds.deadAlly)
-    -- print("HaDrielAlert: partyFull sound = " .. self.db.sounds.partyFull)
+function addon:MakeSoundFromSetting(variable)
+    local sound = Settings.GetValue(variable)
+    local channel = Settings.GetValue("HA_CHANNEL")
+    PlaySoundFile(sound, channel)
 end
 
 function f:ADDON_LOADED(event, addonName)
@@ -41,7 +24,6 @@ function f:ADDON_LOADED(event, addonName)
     end
 
     print("ADDON_LOADED " .. event .. ", " .. addonName)
-    addon:InitializeDatabase()
     addon:InitializeOptions()
 end
 
@@ -61,10 +43,10 @@ function f:UNIT_HEALTH(event, unit)
     end
 
     if UnitFactionGroup(unit) == "Horde" then
-        addon:MakeSound(self.db.sounds.deadHorde)
+        addon:MakeSoundFromSetting("HA_SOUND_DEADHORDE")
     end
     if UnitFactionGroup(unit) == "Alliance" then
-        addon:MakeSound(self.db.sounds.deadAlly)
+        addon:MakeSoundFromSetting("HA_SOUND_DEADALLY")
     end
 end
 
@@ -81,7 +63,7 @@ function f:UpdatePartySize()
     f.transient.lastPartySize = new
 
     if old == 5 then
-        addon:MakeSound(self.db.partyFull)
+        addon:MakeSoundFromSetting("HA_SOUND_PARTYFULL")
     end
 end
 
