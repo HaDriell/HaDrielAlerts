@@ -26,7 +26,4 @@ do
     end
 
     addon.DeathAlert:RegisterFrameEventAndCallback("UNIT_DIED", OnUnitDied, nil)
-    addon.DeathAlert:RegisterFrameEventAndCallback("PARTY_KILL", function(event, attackerGUID, targetGUID)
-        print("PartyKill Attacker:", attackerGUID, " Target: ", targetGUID)
-    end)
 end
