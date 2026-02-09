@@ -53,7 +53,7 @@ function addon:InitializeOptions()
         dropdownInitializer:Init(setting, tooltip)
         layout:AddInitializer(dropdownInitializer)
         Settings.SetOnValueChangedCallback(variable, function(setting, value)
-            addon:MakeSound(variableTbl[variableKey])
+            addon:MakeSoundFromSetting(variable)
         end)
     end
 
@@ -71,7 +71,7 @@ function addon:InitializeOptions()
         dropdownInitializer:Init(setting, tooltip)
         layout:AddInitializer(dropdownInitializer)
         Settings.SetOnValueChangedCallback(variable, function(setting, value)
-            addon:MakeSound(variableTbl[variableKey])
+            addon:MakeSoundFromSetting(variable)
         end)
     end
     
@@ -89,7 +89,7 @@ function addon:InitializeOptions()
         dropdownInitializer:Init(setting, tooltip)
         layout:AddInitializer(dropdownInitializer)
         Settings.SetOnValueChangedCallback(variable, function(setting, value)
-            addon:MakeSound(variableTbl[variableKey])
+            addon:MakeSoundFromSetting(variable)
         end)
     end
 

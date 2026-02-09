@@ -11,4 +11,6 @@ embeds.xml
 
 ExtraSettingsControls.lua
 Config.lua
+Sound.lua
+DeathAlert.lua
 HaDrielAlerts.lua

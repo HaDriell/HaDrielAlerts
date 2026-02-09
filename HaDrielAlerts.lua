@@ -3,20 +3,6 @@ local addonName, addon = ...
 local f = CreateFrame("Frame")
 f.transient = {}
 
--- Sound alert implementations
-
--- Initial implementation, will be removed later
-function addon:MakeSound(soundKey, channel)
-    local media = LibStub("LibSharedMedia-3.0")
-    local sound = media:Fetch("sound", soundKey)
-    PlaySoundFile(sound, channel)
-end
-
-function addon:MakeSoundFromSetting(variable)
-    local sound = Settings.GetValue(variable)
-    local channel = Settings.GetValue("HA_CHANNEL")
-    PlaySoundFile(sound, channel)
-end
 
 function f:ADDON_LOADED(event, addonName)
     if addonName ~= "HaDrielAlerts" then
@@ -29,6 +15,7 @@ end
 
 -- UnitDeath Monitoring
 
+--[[
 function f:UNIT_HEALTH(event, unit)
     if not UnitIsPlayer(unit) then
         return -- Not a player
@@ -49,6 +36,7 @@ function f:UNIT_HEALTH(event, unit)
         addon:MakeSoundFromSetting("HA_SOUND_DEADALLY")
     end
 end
+]]--
 
 -- Group Full Monitoring
 
@@ -82,7 +70,6 @@ function f:DispatchEvent(event, ...)
 end
 
 f:RegisterEvent("ADDON_LOADED")
-f:RegisterEvent("UNIT_HEALTH")
 f:RegisterEvent("GROUP_FORMED")
 f:RegisterEvent("GROUP_ROSTER_UPDATE")
 f:SetScript("OnEvent", f.DispatchEvent)
