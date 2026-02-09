@@ -9,8 +9,11 @@
 
 embeds.xml
 
+# Core scripts
 ExtraSettingsControls.lua
 Config.lua
 Sound.lua
+
+# Alerts scripts
 DeathAlert.lua
-HaDrielAlerts.lua
+PartyFull.lua

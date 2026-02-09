@@ -1,11 +1,17 @@
 local addonName, addon = ...
 
 do
+    addon.DeathAlert = CreateFromMixins(EventRegistry)
+
     local function OnUnitDied(event, unitGUID)
         local unit = UnitTokenFromGUID(unitGUID)
 
+        if not UnitIsFriend("player", unit) then
+            return -- Death Alert is only to notify friends dying
+        end
+
         if UnitIsFeignDeath(unit) then
-            return -- Feign Death -> Ignore
+            return -- That's a Feign Death, not a real Death
         end
 
         local faction = UnitFactionGroup(unit)
@@ -19,5 +25,8 @@ do
         end
     end
 
-    EventRegistry:RegisterFrameEventAndCallback("UNIT_DIED", OnUnitDied, nil)
+    addon.DeathAlert:RegisterFrameEventAndCallback("UNIT_DIED", OnUnitDied, nil)
+    addon.DeathAlert:RegisterFrameEventAndCallback("PARTY_KILL", function(event, attackerGUID, targetGUID)
+        print("PartyKill Attacker:", attackerGUID, " Target: ", targetGUID)
+    end)
 end
