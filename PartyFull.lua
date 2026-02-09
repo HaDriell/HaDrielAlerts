@@ -9,7 +9,8 @@ do
         local new = C_PartyInfo.IsPartyFull()
         addon.PartyFull.WasFull = new
 
-        if not old and new then
+        if (old == false) and (new == true) then
+            -- Party just became full !
             addon:MakeSoundFromSetting("HA_SOUND_PARTYFULL")
         end
     end
