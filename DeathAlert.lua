@@ -10,7 +10,7 @@ do
         end
 
         local unit = UnitTokenFromGUID(unitGUID)
-        if issecretvalue(unit) then
+        if issecretvalue(unit) or (not UnitIsHumanPlayer(unit)) then
             return -- Not a friend unit (PVP I guess ? that's untested)
         end
         if UnitIsFeignDeath(unit) then
