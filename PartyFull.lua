@@ -8,14 +8,18 @@ do
         local old = addon.PartyFull.WasFull
         local new = C_PartyInfo.IsPartyFull()
         addon.PartyFull.WasFull = new
+        
+        if old then
+            return -- Party was already full
+        end
 
-        if (old == false) and (new == true) then
-            -- Party just became full !
+        if new then
             addon:MakeSoundFromSetting("HA_SOUND_PARTYFULL")
         end
     end
 
     addon.PartyFull:RegisterFrameEventAndCallback("GROUP_FORMED", UpdatePartyFull)
-    addon.PartyFull:RegisterFrameEventAndCallback("GROUP_ROSTER_UPDATE", UpdatePartyFull)
+    addon.PartyFull:RegisterFrameEventAndCallback("GROUP_JOINED", UpdatePartyFull)
     addon.PartyFull:RegisterFrameEventAndCallback("GROUP_LEFT", UpdatePartyFull)
+    addon.PartyFull:RegisterFrameEventAndCallback("GROUP_ROSTER_UPDATE", UpdatePartyFull)
 end

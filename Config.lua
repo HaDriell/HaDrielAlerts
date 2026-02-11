@@ -77,7 +77,7 @@ do
             local variable = "HA_SOUND_PARTYFULL"
             local variableKey = "partyFull"
             local variableTbl = HaDrielDB.sounds
-            local defaultValue = "WCII Human Capture"
+            local defaultValue = "WCII Misc Human Capture"
             
             local setting = Settings.RegisterAddOnSetting(category, variable, variableKey, variableTbl, type(defaultValue), name, defaultValue)
             
