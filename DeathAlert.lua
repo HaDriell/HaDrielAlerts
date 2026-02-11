@@ -4,22 +4,23 @@ do
     addon.DeathAlert = CreateFromMixins(EventRegistry)
 
     local function OnUnitDied(event, unitGUID)
+        local unitName = UnitNameFromGUID(unitGUID)
+        if issecretvalue(unitName) then
+            return -- Not a Player or Pet
+        end
+
         local unit = UnitTokenFromGUID(unitGUID)
-
-        if not UnitIsFriend("player", unit) then
-            return -- Death Alert is only to notify friends dying
+        if issecretvalue(unit) then
+            return -- Not a friend unit (PVP I guess ? that's untested)
         end
-
         if UnitIsFeignDeath(unit) then
-            return -- That's a Feign Death, not a real Death
+            return -- That's a Feign Death, Ignore this event
         end
 
-        local faction = UnitFactionGroup(unit)
-        
+        local faction = UnitFactionGroup(unit)        
         if faction == "Horde" then
             addon:MakeSoundFromSetting("HA_SOUND_DEADHORDE")
         end
-
         if faction == "Alliance" then
             addon:MakeSoundFromSetting("HA_SOUND_DEADALLY")
         end
